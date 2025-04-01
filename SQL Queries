@@ -1,0 +1,159 @@
+-- Creating table to successfully import csv file 
+CREATE TABLE jobs_in_data (
+    work_year INT,
+    job_title VARCHAR(255),
+    job_category VARCHAR(100),
+    salary_currency VARCHAR(10),
+    salary_in_usd INT,
+    salary_in_local INT,
+    employee_residence VARCHAR(100),
+    experience_level VARCHAR(50),
+    employment_type VARCHAR(50),
+    work_setting VARCHAR(50),
+    company_location VARCHAR(100),
+    company_size CHAR(1)
+);
+
+-- Checking the data
+SELECT *
+FROM jobs_in_data
+
+-- Top 10 most common job titles
+SELECT
+	job_title,
+	COUNT(job_title) AS job_count
+FROM 
+	jobs_in_data
+GROUP BY
+	job_title
+ORDER BY
+	job_count DESC
+LIMIT 10
+
+-- Job titles that are less than 10 instances
+SELECT
+	job_title,
+	COUNT(job_title) AS job_count
+FROM
+	jobs_in_data
+GROUP BY
+	job_title
+HAVING
+	COUNT(job_title) < 10
+ORDER BY
+	job_count DESC
+
+-- Average salary by experience level
+SELECT
+	experience_level,
+	ROUND(AVG(salary_in_usd), 2) AS AverageSalary
+FROM 
+	jobs_in_data
+GROUP BY
+	experience_level
+ORDER BY
+	AverageSalary DESC
+
+-- Top 10 countries offering the highest salary
+SELECT
+	company_location,
+	ROUND(AVG(salary_in_usd), 2) AS AverageSalary
+FROM
+	jobs_in_data
+GROUP BY
+	company_location
+ORDER BY
+	AverageSalary DESC
+LIMIT 10
+
+-- Top 10 paying job titles overall
+SELECT
+	job_title,
+	ROUND(AVG(salary_in_usd), 2) AS AverageSalary
+FROM
+	jobs_in_data
+GROUP BY
+	job_title
+HAVING
+	COUNT(job_title) > 100 -- Filter out more "obscure" job titles
+ORDER BY
+	AverageSalary DESC
+LIMIT 10
+
+
+-- Salary trend by experience level
+SELECT
+	job_title,
+	experience_level,
+	salary_in_usd,
+	ROUND(AVG(salary_in_usd) OVER (PARTITION BY experience_level ORDER BY salary_in_usd DESC), 2) AS AverageSalaryByExp
+FROM
+	jobs_in_data
+
+-- Remote vs In-Person Salary Comparison
+SELECT
+	work_setting,
+	ROUND(AVG(salary_in_usd), 2) AS AverageSalary,
+	COUNT(job_title) AS JobCount
+FROM
+	jobs_in_data
+GROUP BY
+	work_setting
+ORDER BY
+	AverageSalary DESC
+
+-- Which countries pay the most?
+SELECT 
+	company_location, 
+	ROUND(AVG(salary_in_usd), 2) AS avg_salary
+FROM 
+	jobs_in_data
+WHERE company_location IN (
+    SELECT 
+		company_location
+    FROM 
+		jobs_in_data
+    GROUP BY 
+		company_location
+    HAVING COUNT(job_title) > 5
+)
+GROUP BY 
+	company_location
+ORDER BY 
+	avg_salary DESC
+LIMIT 10
+
+
+-- Average salary over time
+SELECT
+	work_year,
+	salary_in_usd,
+	ROUND(AVG(salary_in_usd) OVER(PARTITION BY work_year), 2) AS AverageSalaryPerYear,
+	CASE
+		WHEN salary_in_usd > AVG(salary_in_usd) OVER(PARTITION BY work_year)
+			THEN 'Above Average'
+		WHEN salary_in_usd < AVG(salary_in_usd) OVER(PARTITION BY work_year)
+			THEN 'Below Average'
+		ELSE 'No Difference'
+	END AS salary_vs_yearlyAvg
+FROM
+	jobs_in_data
+ORDER BY
+	work_year,
+	salary_in_usd DESC
+
+-- Salary distribution by company size
+SELECT
+	company_size,
+	COUNT(job_title) AS JobCount,
+	ROUND(AVG(salary_in_usd), 2) AS AverageSalary
+FROM
+	jobs_in_data
+GROUP BY
+	company_size
+ORDER BY
+	AverageSalary DESC
+
+
+
+
