@@ -30,11 +30,17 @@ The dataset includes the following fields:
 
 Key Visualizations:
 🔝 Top 10 Most Common Job Titles
+
 💸 Average Salary by Experience Level
+
 🌍 Highest Paying Countries
+
 👨‍💻 Top 10 Paying Roles (with over 100 entries)
+
 🏢 Salary Distribution by Company Size
+
 🧭 Remote vs In-Person Salary Comparison
+
 📈 Salary Trend by Experience Level Over Time
 
 # Key Recommendations
