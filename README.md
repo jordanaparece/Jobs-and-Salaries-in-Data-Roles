@@ -20,7 +20,7 @@ The dataset includes the following fields:
 * employee_residence, employement_type, experience_level
 * work_setting, company_location, company_size
 
-# Methods and Tech STack
+# Methods and Tech Stack
 * SQL (PostgreSQL): used for data wrangling, aggregation, and EDA (CTEs, window functions, case statements, aggregate functions)
 * Tableau: used for visualizing the queries and storytelling
 * pgAdmin4: used for executing SQL queries and validating table structure
